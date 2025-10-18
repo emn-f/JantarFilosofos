@@ -24,7 +24,7 @@ public class Filosofo extends Thread {
     private void pensar() {
         try {
             int tempo = TEMPO_MINIMO + (int) (Math.random() * TEMPO_MAXIMO);
-            System.out.println("<<< Filósofo " + idFilosofo + " está PENSANDO por " + (tempo/1000.0) + "s >>>");
+            System.out.println("<<< Filósofo " + idFilosofo + " está PENSANDO >>>");
             sleep(tempo);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -34,8 +34,7 @@ public class Filosofo extends Thread {
     private void comer() {
         try {
             int tempo = TEMPO_MINIMO + (int) (Math.random() * TEMPO_MAXIMO);
-            // Mensagem de comer agora está aqui, para aparecer após pegar os dois garfos
-            System.out.println(">>> Filósofo " + idFilosofo + " está COMENDO por " + (tempo/1000.0) + "s <<<");
+            System.out.println(">>> Filósofo " + idFilosofo + " está COMENDO <<<");
             sleep(tempo);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
