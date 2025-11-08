@@ -1,10 +1,13 @@
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 public class Mesa {
     final static int NR_FILOSOFOS = 5;
 
     private final Lock[] garfos = new ReentrantLock[NR_FILOSOFOS];
+    private final Random aleatorio = new Random();
 
     public Mesa() {
         for (int i = 0; i < NR_FILOSOFOS; i++) {
@@ -12,36 +15,59 @@ public class Mesa {
         }
     }
 
-    public void pegarGarfos(int idFilosofo) {
+    // O método pegarGarfos() permanece exatamente igual ao da última versão
+    public boolean pegarGarfos(int idFilosofo, long tempoMaximoEsperaMs) {
 
-        int garfoEsquerdo = idFilosofo;
-        int garfoDireito = (idFilosofo + 1) % NR_FILOSOFOS;
+        int garfoEsquerdoIdx = idFilosofo;
+        int garfoDireitoIdx = (idFilosofo + 1) % NR_FILOSOFOS;
 
-        Lock primeiroGarfo = garfos[Math.min(garfoEsquerdo, garfoDireito)];
-        Lock segundoGarfo = garfos[Math.max(garfoEsquerdo, garfoDireito)];
+        Lock primeiroGarfo, segundoGarfo;
+        String nomePrimeiro, nomeSegundo;
 
-        int idPrimeiroGarfo = Math.min(garfoEsquerdo, garfoDireito);
-        int idSegundoGarfo = Math.max(garfoEsquerdo, garfoDireito);
+        if (aleatorio.nextBoolean()) {
+            primeiroGarfo = garfos[garfoEsquerdoIdx];
+            nomePrimeiro = "esquerdo";
+            segundoGarfo = garfos[garfoDireitoIdx];
+            nomeSegundo = "direito";
+        } else {
+            primeiroGarfo = garfos[garfoDireitoIdx];
+            nomePrimeiro = "direito";
+            segundoGarfo = garfos[garfoEsquerdoIdx];
+            nomeSegundo = "esquerdo";
+        }
+
+        System.out.println("-> Filósofo " + idFilosofo + " tentou comer. Tentando primeiro o garfo: " + nomePrimeiro);
 
         try {
-            System.out.println("-> Filósofo " + idFilosofo + " tentou comer... Precisa dos garfos [" + garfoEsquerdo + " e " + garfoDireito + "]");
-
             primeiroGarfo.lock();
-            System.out.println("   Filósofo " + idFilosofo + " pegou o primeiro garfo: " + idPrimeiroGarfo);
+            System.out.println("   Filósofo " + idFilosofo + " PEGOU o garfo " + nomePrimeiro + ".");
 
-            segundoGarfo.lock();
-            System.out.println("   Filósofo " + idFilosofo + " pegou o segundo garfo: " + idSegundoGarfo + ". Conseguiu comer!");
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (segundoGarfo.tryLock(tempoMaximoEsperaMs, TimeUnit.MILLISECONDS)) {
+                System.out.println("   Filósofo " + idFilosofo + " PEGOU o garfo " + nomeSegundo + ". Conseguiu comer!");
+                return true;
+            } else {
+                System.out.println("   Filósofo " + idFilosofo + " TIMEOUT. Não pegou o garfo " + nomeSegundo + ". Soltando o " + nomePrimeiro + ".");
+                primeiroGarfo.unlock(); 
+                return false;
+            }
+        } catch (InterruptedException e) {
+            System.out.println("   Filósofo " + idFilosofo + " foi interrompido enquanto esperava.");
+            if (((ReentrantLock)primeiroGarfo).isHeldByCurrentThread()) {
+                primeiroGarfo.unlock();
+            }
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 
-    public void devolverGarfos(int idFilosofo) {
+    // Req: Método agora recebe o contador de ciclos de comida
+    public void devolverGarfos(int idFilosofo, int tempoComendo, int ciclosComendo) {
         int garfoEsquerdo = idFilosofo;
         int garfoDireito = (idFilosofo + 1) % NR_FILOSOFOS;
-        System.out.println("<- Filósofo " + idFilosofo + " terminou de comer. Devolvendo os garfos [" + garfoEsquerdo
-                + " e " + garfoDireito + "]");
+        
+        // Req: Exibe o contador de "comer" e o tempo
+        System.out.println("<- Filósofo " + idFilosofo + " terminou de comer (Ciclo: " + ciclosComendo + ", " + tempoComendo + "ms). Devolvendo os garfos.");
+
         garfos[garfoDireito].unlock();
         garfos[garfoEsquerdo].unlock();
 
