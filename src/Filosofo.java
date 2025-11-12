@@ -6,7 +6,6 @@ public class Filosofo extends Thread {
     private Mesa mesa;
     private int idFilosofo;
 
-    // Req: Contadores de ciclo para cada ação
     private int ciclosComendo = 0;
     private int ciclosPensando = 0;
 
@@ -19,18 +18,15 @@ public class Filosofo extends Thread {
     @Override
     public void run() {
         while (true) {
-            pensar(); // O log do contador de "pensar" está dentro deste método
+            pensar();
 
             long inicioEspera = System.currentTimeMillis();
             boolean pegouGarfos = mesa.pegarGarfos(idFilosofo, TEMPO_MAXIMO_ESPERA_GARFO);
-            // (Não precisamos mais acumular o tempo de espera)
 
             if (pegouGarfos) {
-                int tempoComendo = comer(); // O log "está comendo" está aqui
+                int tempoComendo = comer();
                 
-                ciclosComendo++; // Incrementa o contador
-                
-                // Passa o tempo e o novo contador para o método devolverGarfos
+                ciclosComendo++;
                 mesa.devolverGarfos(idFilosofo, tempoComendo, ciclosComendo); 
             } else {
                 System.out.println("!!! Filósofo " + idFilosofo + " não conseguiu comer (timeout) e voltou a PENSAR.");
@@ -40,10 +36,9 @@ public class Filosofo extends Thread {
 
     private void pensar() {
         try {
-            ciclosPensando++; // Req: Incrementa o contador de "pensar"
+            ciclosPensando++;
             int tempo = TEMPO_MINIMO + (int) (Math.random() * TEMPO_MAXIMO);
             
-            // Req: Exibe o contador de "pensar"
             System.out.println("<<< Filósofo " + idFilosofo + " está PENSANDO (Ciclo: " + ciclosPensando + ", " + tempo + "ms) >>>");
             sleep(tempo);
         } catch (InterruptedException e) {
@@ -55,8 +50,7 @@ public class Filosofo extends Thread {
         int tempo = 0;
         try {
             tempo = TEMPO_MINIMO + (int) (Math.random() * TEMPO_MAXIMO);
-            
-            // Req: Exibe o contador de "comer" (usamos +1 pq ele só é incrementado depois)
+
             System.out.println(">>> Filósofo " + idFilosofo + " está COMENDO (Ciclo: " + (ciclosComendo + 1) + ") <<<");
             sleep(tempo);
         } catch (InterruptedException e) {
@@ -65,5 +59,4 @@ public class Filosofo extends Thread {
         return tempo; 
     }
     
-    // O método exibirStats() foi removido
 }
