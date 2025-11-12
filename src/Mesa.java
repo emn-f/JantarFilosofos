@@ -15,7 +15,6 @@ public class Mesa {
         }
     }
 
-    // O método pegarGarfos() permanece exatamente igual ao da última versão
     public boolean pegarGarfos(int idFilosofo, long tempoMaximoEsperaMs) {
 
         int garfoEsquerdoIdx = idFilosofo;
@@ -60,12 +59,10 @@ public class Mesa {
         }
     }
 
-    // Req: Método agora recebe o contador de ciclos de comida
     public void devolverGarfos(int idFilosofo, int tempoComendo, int ciclosComendo) {
         int garfoEsquerdo = idFilosofo;
         int garfoDireito = (idFilosofo + 1) % NR_FILOSOFOS;
         
-        // Req: Exibe o contador de "comer" e o tempo
         System.out.println("<- Filósofo " + idFilosofo + " terminou de comer (Ciclo: " + ciclosComendo + ", " + tempoComendo + "ms). Devolvendo os garfos.");
 
         garfos[garfoDireito].unlock();
