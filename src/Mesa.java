@@ -12,7 +12,11 @@ public class Mesa {
         }
     }
 
+<<<<<<< HEAD
     public void pegarGarfos(int idFilosofo) {
+=======
+    public boolean pegarGarfos(int idFilosofo, long tempoMaximoEsperaMs) {
+>>>>>>> 4e908ca448e85d0fdc5639328b0c5262cc9f7fc2
 
         int garfoEsquerdo = idFilosofo;
         int garfoDireito = (idFilosofo + 1) % NR_FILOSOFOS;
@@ -37,11 +41,20 @@ public class Mesa {
         }
     }
 
+<<<<<<< HEAD
     public void devolverGarfos(int idFilosofo) {
         int garfoEsquerdo = idFilosofo;
         int garfoDireito = (idFilosofo + 1) % NR_FILOSOFOS;
         System.out.println("<- Filósofo " + idFilosofo + " terminou de comer. Devolvendo os garfos [" + garfoEsquerdo
                 + " e " + garfoDireito + "]");
+=======
+    public void devolverGarfos(int idFilosofo, int tempoComendo, int ciclosComendo) {
+        int garfoEsquerdo = idFilosofo;
+        int garfoDireito = (idFilosofo + 1) % NR_FILOSOFOS;
+        
+        System.out.println("<- Filósofo " + idFilosofo + " terminou de comer (Ciclo: " + ciclosComendo + ", " + tempoComendo + "ms). Devolvendo os garfos.");
+
+>>>>>>> 4e908ca448e85d0fdc5639328b0c5262cc9f7fc2
         garfos[garfoDireito].unlock();
         garfos[garfoEsquerdo].unlock();
 
